@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart AI Traffic Management System | SIH 2024</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    
+    <script>
+        // Global Error Boundary - Displays runtime crashes visibly on screen
+        window.onerror = function(message, source, lineno, colno, error) {
+            console.error("Global Error Caught:", message, "at", source, ":", lineno);
+            const banner = document.createElement('div');
+            banner.style.position = 'fixed';
+            banner.style.top = '10px';
+            banner.style.left = '50%';
+            banner.style.transform = 'translateX(-50%)';
+            banner.style.background = 'rgba(255, 56, 56, 0.95)';
+            banner.style.color = '#fff';
+            banner.style.padding = '12px 24px';
+            banner.style.borderRadius = '8px';
+            banner.style.fontFamily = 'monospace';
+            banner.style.fontSize = '12px';
+            banner.style.zIndex = '9999';
+            banner.style.boxShadow = '0 4px 20px rgba(255,56,56,0.4)';
+            banner.style.border = '1px solid #ff8888';
+            banner.style.lineHeight = '1.4';
+            banner.innerHTML = `<strong>[Application Error]</strong> ${message}<br><small>in ${source.split('/').pop()}:${lineno}</small>`;
+            document.body.appendChild(banner);
+        };
+    </script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation & Controls -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <div class="logo-glow"></div>
+                    <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="16" x="4" y="4" rx="2"/><rect width="6" height="6" x="9" y="9" rx="1"/><path d="M9 1v3"/><path d="M15 1v3"/><path d="M9 20v3"/><path d="M15 20v3"/><path d="M20 9h3"/><path d="M20 15h3"/><path d="M1 9h3"/><path d="M1 15h3"/></svg>
+                    <div>
+                        <h2>Traffic Management System</h2>
+                        <span class="sub-title">SIH 2024 • ID 1607</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="problem-statement-card">
+                <div class="card-header-small">
+                    <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                    <h3>Problem Statement</h3>
+                </div>
+                <p>AI-based traffic management system to monitor traffic in real-time and adapt traffic light timings on routes with heavy traffic from different directions, minimizing delays and emissions.</p>
+                <div class="dst-tag">DST Sponsored</div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-right: 6px;"><line x1="4" x2="4" y1="21" y2="14"/><line x1="4" x2="4" y1="10" y2="3"/><line x1="12" x2="12" y1="21" y2="12"/><line x1="12" x2="12" y1="8" y2="3"/><line x1="20" x2="20" y1="21" y2="16"/><line x1="20" x2="20" y1="12" y2="3"/><line x1="2" x2="6" y1="14" y2="14"/><line x1="10" x2="14" y1="8" y2="8"/><line x1="18" x2="22" y1="16" y2="16"/></svg>
+                    Control Panel
+                </h3>
+                
+                <div class="control-group">
+                    <label>Control Mode</label>
+                    <div class="mode-selector">
+                        <button class="mode-btn active" id="btn-static" onclick="setControlMode('static')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px; margin-right: 8px; display: inline-block; vertical-align: middle;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            <span>Static Timer</span>
+                        </button>
+                        <button class="mode-btn" id="btn-actuated" onclick="setControlMode('actuated')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px; margin-right: 8px; display: inline-block; vertical-align: middle;"><path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9"/><path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5"/><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5"/><path d="M19.1 4.9C23 8.8 23 15.2 19.1 19.1"/></svg>
+                            <span>Actuated (Sensors)</span>
+                        </button>
+                        <button class="mode-btn" id="btn-ai" onclick="setControlMode('ai')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px; margin-right: 8px; display: inline-block; vertical-align: middle;"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+                            <span>AI Q-Learning</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <div class="label-val">
+                        <label>Environment Settings</label>
+                    </div>
+                    <div class="weather-selector">
+                        <button class="env-btn active" id="env-sunny" onclick="setEnvironment('sunny')" title="Sunny Day">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+                        </button>
+                        <button class="env-btn" id="env-rainy" onclick="setEnvironment('rainy')" title="Heavy Rain">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M9.2 22l-.8-3"/><path d="M16 22l-.8-3"/><path d="M12.4 22l-.8-3"/></svg>
+                        </button>
+                        <button class="env-btn" id="env-night" onclick="setEnvironment('night')" title="Night Operations">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <div class="label-val">
+                        <label>Audio & Sound Effects</label>
+                        <span id="val-audio">Muted</span>
+                    </div>
+                    <button class="sound-toggle-btn" id="btn-sound" onclick="toggleSound()">
+                        <svg id="icon-sound" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-right: 6px;"><path d="M11 5L6 9H2v6h4l5 4V5z"/><line x1="23" x2="17" y1="9" y2="15"/><line x1="17" x2="23" y1="9" y2="15"/></svg>
+                        <span>Enable Synth Sounds</span>
+                    </button>
+                </div>
+
+                <div class="control-group">
+                    <div class="label-val">
+                        <label for="slider-speed">Simulation Speed</label>
+                        <span id="val-speed">1x</span>
+                    </div>
+                    <input type="range" id="slider-speed" min="0.5" max="5" step="0.5" value="1">
+                </div>
+
+                <div class="control-group">
+                    <div class="label-val">
+                        <label for="slider-density">Traffic Density (Cars/min)</label>
+                        <span id="val-density">20</span>
+                    </div>
+                    <input type="range" id="slider-density" min="5" max="50" step="5" value="20">
+                </div>
+
+                <div class="control-group">
+                    <label>Emergency & Pedestrians</label>
+                    <div class="emergency-buttons">
+                        <button class="btn-emergency" onclick="spawnEmergency('North')">N Ambulance</button>
+                        <button class="btn-emergency" onclick="spawnEmergency('South')">S Ambulance</button>
+                        <button class="btn-emergency" onclick="spawnEmergency('East')">E Ambulance</button>
+                        <button class="btn-emergency" onclick="spawnEmergency('West')">W Ambulance</button>
+                    </div>
+                    <button class="btn-pedestrian" onclick="triggerPedestrianCross()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-right: 6px;"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        Request Pedestrian Cross
+                    </button>
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="status-indicator">
+                    <span class="pulse-dot green"></span>
+                    <span>System Online (AI Engine Loaded)</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Workspace -->
+        <main class="main-content">
+            <header class="main-header">
+                <div class="header-left">
+                    <h1>Real-Time Intersection Simulator</h1>
+                    <p class="description">Live adaptive control of 4-way intelligent intersection with sensor monitoring</p>
+                </div>
+                <div class="header-right">
+                    <div class="kpi-micro">
+                        <span class="kpi-micro-label">Active Mode</span>
+                        <span class="kpi-micro-value highlight-cyan" id="active-mode-display">Static Timer</span>
+                    </div>
+                    <div class="kpi-micro">
+                        <span class="kpi-micro-label">Sim FPS</span>
+                        <span class="kpi-micro-value" id="fps-display">60</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="simulation-dashboard-grid">
+                <!-- Left: Simulation Canvas -->
+                <div class="card canvas-card">
+                    <div class="canvas-header">
+                        <div class="canvas-title">
+                            <svg class="title-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px; margin-right: 8px; color: var(--neon-cyan); display: inline-block; vertical-align: middle;"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg>
+                            <h3>Visualizer (4-Way Junction)</h3>
+                        </div>
+                        <div class="canvas-controls">
+                            <button class="icon-btn" id="btn-pause" onclick="togglePauseSimulation()" title="Pause/Play">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 12px; height: 12px;"><rect width="4" height="16" x="6" y="4" rx="1"/><rect width="4" height="16" x="14" y="4" rx="1"/></svg>
+                            </button>
+                            <button class="icon-btn" id="btn-restart" onclick="resetSimulation()" title="Reset Simulation">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 12px; height: 12px;"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><polyline points="3 3 3 8 8 8"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="canvas-container">
+                        <canvas id="traffic-canvas" width="700" height="700"></canvas>
+                        
+                        <div class="canvas-overlay-ui">
+                            <div class="sensor-overlay">
+                                <h4>Inductive Loop Sensors</h4>
+                                <div class="sensor-row">
+                                    <span>North Lane:</span>
+                                    <span class="sensor-status badge-red" id="sensor-N">OFF</span>
+                                </div>
+                                <div class="sensor-row">
+                                    <span>South Lane:</span>
+                                    <span class="sensor-status badge-red" id="sensor-S">OFF</span>
+                                </div>
+                                <div class="sensor-row">
+                                    <span>East Lane:</span>
+                                    <span class="sensor-status badge-red" id="sensor-E">OFF</span>
+                                </div>
+                                <div class="sensor-row">
+                                    <span>West Lane:</span>
+                                    <span class="sensor-status badge-red" id="sensor-W">OFF</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Stats & Charts -->
+                <div class="stats-panel">
+                    <div class="metrics-row-grid">
+                        <div class="metric-card cyan">
+                            <div class="metric-icon-bg">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px; color: var(--neon-cyan);"><path d="M5 2h14"/><path d="M5 22h14"/><path d="M19 2v4c0 1.38-1.13 2.5-2.5 3L12 12l4.5 3c1.37.5 2.5 1.62 2.5 3v4"/><path d="M5 2v4c0 1.38 1.12 2.5 2.5 3L12 12l-4.5 3C6.12 18.5 5 19.62 5 22"/></svg>
+                            </div>
+                            <div class="metric-info">
+                                <span class="metric-label">Avg Vehicle Delay</span>
+                                <h2 class="metric-value" id="stat-avg-delay">0.0s</h2>
+                                <span class="metric-trend green-trend" id="stat-delay-compare">--</span>
+                            </div>
+                        </div>
+
+                        <div class="metric-card violet">
+                            <div class="metric-icon-bg">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px; color: var(--neon-violet);"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                            </div>
+                            <div class="metric-info">
+                                <span class="metric-label">Avg Throughput</span>
+                                <h2 class="metric-value" id="stat-throughput">0 veh/m</h2>
+                                <span class="metric-trend green-trend" id="stat-throughput-compare">--</span>
+                            </div>
+                        </div>
+
+                        <div class="metric-card emerald">
+                            <div class="metric-icon-bg">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px; color: var(--neon-emerald);"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 3.58 1 9.2a7.5 7.5 0 0 1-7 8.8Z"/><path d="M19 2c-2.26 4.33-5.27 7.14-8 10"/></svg>
+                            </div>
+                            <div class="metric-info">
+                                <span class="metric-label">CO₂ Emitted</span>
+                                <h2 class="metric-value" id="stat-co2">0g</h2>
+                                <span class="metric-trend green-trend" id="stat-co2-saved">0g saved</span>
+                            </div>
+                        </div>
+
+                        <div class="metric-card amber">
+                            <div class="metric-icon-bg">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px; color: var(--neon-amber);"><path d="M3 22h12"/><path d="M4 22V4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v18"/><path d="M14 13h4a2 2 0 0 1 2 2v4a2 2 0 0 0 2 2h1"/><path d="M6 6h6"/><circle cx="9" cy="18" r="2"/></svg>
+                            </div>
+                            <div class="metric-info">
+                                <span class="metric-label">Fuel Consumed</span>
+                                <h2 class="metric-value" id="stat-fuel">0.00 L</h2>
+                                <span class="metric-trend red-trend" id="stat-fuel-wasted">0.00 L idle waste</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Municipal Carbon Impact Calculator -->
+                    <div class="card calculator-card">
+                        <div class="calc-header">
+                            <svg class="calc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px; color: var(--neon-emerald); margin-right: 8px; display: inline-block; vertical-align: middle;"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></svg>
+                            <h3>Municipal Impact Estimator</h3>
+                        </div>
+                        <div class="calc-grid">
+                            <div class="calc-input-group">
+                                <label for="num-intersections">City Intersections</label>
+                                <input type="number" id="num-intersections" value="50" min="1" max="1000">
+                            </div>
+                            <div class="calc-input-group">
+                                <label for="fuel-price">Fuel Price ($/L)</label>
+                                <input type="number" id="fuel-price" value="1.25" step="0.05" min="0.5">
+                            </div>
+                            <div class="calc-stats">
+                                <div class="calc-stat">
+                                    <span class="calc-label">Annual Savings</span>
+                                    <span class="calc-value text-neon-green" id="calc-money-saved">$0</span>
+                                </div>
+                                <div class="calc-stat">
+                                    <span class="calc-label">CO₂ Offset</span>
+                                    <span class="calc-value text-neon-blue" id="calc-co2-saved">0 tons</span>
+                                </div>
+                                <div class="calc-stat">
+                                    <span class="calc-label">Trees Planted Eq.</span>
+                                    <span class="calc-value text-neon-yellow" id="calc-trees-equivalent">0 trees</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tabs Area -->
+                    <div class="card graph-card">
+                        <div class="card-header">
+                            <div class="tab-selectors">
+                                <button class="tab-btn active" id="tab-chart-btn" onclick="switchTab('charts')">Live Analytics</button>
+                                <button class="tab-btn" id="tab-comparison-btn" onclick="switchTab('comparison')">Mode Comparison</button>
+                                <button class="tab-btn" id="tab-ai-btn" onclick="switchTab('ai')">AI Engine Insights</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <!-- Charts Tab -->
+                            <div class="tab-content" id="tab-charts">
+                                <div class="chart-wrapper">
+                                    <canvas id="live-analytics-chart"></canvas>
+                                </div>
+                            </div>
+
+                            <!-- Mode Comparison Tab -->
+                            <div class="tab-content hidden" id="tab-comparison">
+                                <div class="comparison-grid">
+                                    <div class="comparison-column">
+                                        <h4>Average Delay</h4>
+                                        <div class="bar-container">
+                                            <span class="bar-label">Static</span>
+                                            <div class="bar-fill-bg"><div class="bar-fill-inner bg-red" id="bar-delay-static" style="width: 0%"></div></div>
+                                            <span class="bar-value" id="val-delay-static">0.0s</span>
+                                        </div>
+                                        <div class="bar-container">
+                                            <span class="bar-label">Actuated</span>
+                                            <div class="bar-fill-bg"><div class="bar-fill-inner bg-yellow" id="bar-delay-actuated" style="width: 0%"></div></div>
+                                            <span class="bar-value" id="val-delay-actuated">0.0s</span>
+                                        </div>
+                                        <div class="bar-container">
+                                            <span class="bar-label">AI RL</span>
+                                            <div class="bar-fill-bg"><div class="bar-fill-inner bg-cyan" id="bar-delay-ai" style="width: 0%"></div></div>
+                                            <span class="bar-value" id="val-delay-ai">0.0s</span>
+                                        </div>
+                                    </div>
+                                    <div class="comparison-column">
+                                        <h4>Carbon Footprint</h4>
+                                        <div class="bar-container">
+                                            <span class="bar-label">Static</span>
+                                            <div class="bar-fill-bg"><div class="bar-fill-inner bg-red" id="bar-co2-static" style="width: 0%"></div></div>
+                                            <span class="bar-value" id="val-co2-static">0g</span>
+                                        </div>
+                                        <div class="bar-container">
+                                            <span class="bar-label">Actuated</span>
+                                            <div class="bar-fill-bg"><div class="bar-fill-inner bg-yellow" id="bar-co2-actuated" style="width: 0%"></div></div>
+                                            <span class="bar-value" id="val-co2-actuated">0g</span>
+                                        </div>
+                                        <div class="bar-container">
+                                            <span class="bar-label">AI RL</span>
+                                            <div class="bar-fill-bg"><div class="bar-fill-inner bg-cyan" id="bar-co2-ai" style="width: 0%"></div></div>
+                                            <span class="bar-value" id="val-co2-ai">0g</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- AI Debug Tab -->
+                            <div class="tab-content hidden" id="tab-ai">
+                                <div class="ai-tab-layout">
+                                    <div class="ai-metrics-column">
+                                        <div class="ai-debug-grid">
+                                            <div class="ai-stat-item">
+                                                <span class="ai-stat-label">Episodes</span>
+                                                <span class="ai-stat-val text-neon-blue" id="ai-episodes">0</span>
+                                            </div>
+                                            <div class="ai-stat-item">
+                                                <span class="ai-stat-label">Exploration (&epsilon;)</span>
+                                                <span class="ai-stat-val text-neon-yellow" id="ai-epsilon">0.30</span>
+                                            </div>
+                                            <div class="ai-stat-item">
+                                                <span class="ai-stat-label">Active Reward</span>
+                                                <span class="ai-stat-val text-neon-green" id="ai-reward">0.0</span>
+                                            </div>
+                                            <div class="ai-stat-item">
+                                                <span class="ai-stat-label">Steps Count</span>
+                                                <span class="ai-stat-val" id="ai-steps">0</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="q-learning-visualizer">
+                                            <h4>State Representation Vector</h4>
+                                            <div class="state-vector">
+                                                <div class="vector-element" id="vector-N"><span class="vector-dir">N</span><span class="vector-val">0</span></div>
+                                                <div class="vector-element" id="vector-S"><span class="vector-dir">S</span><span class="vector-val">0</span></div>
+                                                <div class="vector-element" id="vector-E"><span class="vector-dir">E</span><span class="vector-val">0</span></div>
+                                                <div class="vector-element" id="vector-W"><span class="vector-dir">W</span><span class="vector-val">0</span></div>
+                                            </div>
+                                            <p class="vector-desc">State represents queue length discretized in lanes. Action represents selected phase (N-S Green vs. E-W Green).</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="ai-visualizer-column">
+                                        <div class="network-card">
+                                            <h4>Neural Network Activity</h4>
+                                            <div class="neural-net-container">
+                                                <canvas id="neural-net-canvas" width="280" height="150"></canvas>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="ai-training-panel">
+                                            <div class="ai-train-header">
+                                                <h4>Fast-Train Offline Agent</h4>
+                                                <button class="btn-primary-neon" onclick="fastTrainAgent()">
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 10px; height: 10px; margin-right: 4px; display: inline-block; vertical-align: middle;"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg>
+                                                    Train 100 Ep.
+                                                </button>
+                                            </div>
+                                            <div class="progress-bar-container">
+                                                <div class="progress-bar-fill" id="training-progress" style="width: 0%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Load main script files -->
+    <script src="ai_controller.js"></script>
+    <script src="simulation.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
